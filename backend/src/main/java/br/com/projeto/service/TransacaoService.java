@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
+import br.com.projeto.model.Categoria;
 import br.com.projeto.model.Transacao;
 import br.com.projeto.model.enums.TipoTransacao;
+import br.com.projeto.repository.CategoriaRepository;
 import br.com.projeto.repository.TransacaoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Sort;
@@ -17,15 +19,26 @@ public class TransacaoService {
     private static final Set<String> CAMPOS_PERMITIDOS = Set.of("data", "valor", "descricao", "id");
 
     private final TransacaoRepository transacaoRepository;
+    private final CategoriaRepository categoriaRepository;
 
-    public TransacaoService(TransacaoRepository transacaoRepository) {
+    public TransacaoService(TransacaoRepository transacaoRepository, CategoriaRepository categoriaRepository) {
         this.transacaoRepository = transacaoRepository;
+        this.categoriaRepository = categoriaRepository;
     }
 
     private Sort criarOrdenacao(String campo, String direcao) {
         String campoOrdenacao = (campo != null && CAMPOS_PERMITIDOS.contains(campo)) ? campo : "data";
         Sort.Direction direction = "asc".equalsIgnoreCase(direcao) ? Sort.Direction.ASC : Sort.Direction.DESC;
         return Sort.by(direction, campoOrdenacao);
+    }
+
+    private Categoria resolverCategoria(Transacao transacao) {
+        if (transacao.getCategoria() == null || transacao.getCategoria().getId() == null) {
+            throw new IllegalArgumentException("A categoria é obrigatória.");
+        }
+        Long categoriaId = transacao.getCategoria().getId();
+        return categoriaRepository.findById(categoriaId)
+                .orElseThrow(() -> new EntityNotFoundException("Categoria com ID " + categoriaId + " não encontrada."));
     }
 
     public List<Transacao> listarTodas(String campo, String direcao) {
@@ -46,6 +59,7 @@ public class TransacaoService {
     }
 
     public Transacao salvar(Transacao transacao) {
+        transacao.setCategoria(resolverCategoria(transacao));
         transacao.setAtivo(true);
         return transacaoRepository.save(transacao);
     }
@@ -56,7 +70,7 @@ public class TransacaoService {
         existente.setValor(dados.getValor());
         existente.setData(dados.getData());
         existente.setTipo(dados.getTipo());
-        existente.setCategoria(dados.getCategoria());
+        existente.setCategoria(resolverCategoria(dados));
         existente.setObservacao(dados.getObservacao());
         return transacaoRepository.save(existente);
     }
