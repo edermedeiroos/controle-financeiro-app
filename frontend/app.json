@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "Controle Financeiro",
+    "slug": "controle-financeiro-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "android": {
+      "package": "br.com.projeto.controlefinanceiro"
+    }
+  }
+}
