@@ -2,6 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
+import FormTransacaoScreen from './src/screens/FormTransacaoScreen';
 import ListaTransacoesScreen from './src/screens/ListaTransacoesScreen';
 
 const Stack = createNativeStackNavigator();
@@ -22,6 +23,11 @@ export default function App() {
           name="ListaTransacoes"
           component={ListaTransacoesScreen}
           options={{ title: 'Controle Financeiro' }}
+        />
+        <Stack.Screen
+          name="FormTransacao"
+          component={FormTransacaoScreen}
+          options={{ title: 'Transação' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
