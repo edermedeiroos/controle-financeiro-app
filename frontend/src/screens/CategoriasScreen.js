@@ -191,7 +191,9 @@ const styles = StyleSheet.create({
   },
   caixaErro: {
     backgroundColor: '#fee2e2',
-    padding: 10,
+    borderLeftWidth: 4,
+    borderLeftColor: '#b91c1c',
+    padding: 12,
     borderRadius: 6,
     marginBottom: 10,
   },
@@ -201,13 +203,16 @@ const styles = StyleSheet.create({
   },
   caixaSucesso: {
     backgroundColor: '#dcfce7',
-    padding: 10,
+    borderLeftWidth: 4,
+    borderLeftColor: '#15803d',
+    padding: 12,
     borderRadius: 6,
     marginBottom: 10,
   },
   textoSucesso: {
     color: '#166534',
     fontSize: 13,
+    fontWeight: '500',
   },
   centro: {
     flex: 1,

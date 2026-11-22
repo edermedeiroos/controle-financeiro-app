@@ -257,7 +257,9 @@ const styles = StyleSheet.create({
   },
   caixaErro: {
     backgroundColor: '#fee2e2',
-    padding: 10,
+    borderLeftWidth: 4,
+    borderLeftColor: '#b91c1c',
+    padding: 12,
     borderRadius: 6,
     marginBottom: 12,
   },
@@ -270,7 +272,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#334155',
     marginBottom: 6,
-    marginTop: 8,
+    marginTop: 10,
   },
   input: {
     backgroundColor: '#ffffff',

@@ -31,6 +31,7 @@ export default function ListaTransacoesScreen({ navigation }) {
   const [carregando, setCarregando] = useState(true);
   const [atualizando, setAtualizando] = useState(false);
   const [erro, setErro] = useState('');
+  const [mensagemSucesso, setMensagemSucesso] = useState('');
 
   const carregarDados = useCallback(
     async (silencioso = false, buscaParam = buscaAtiva, campoParam = campoOrdenacao, direcaoParam = direcaoOrdenacao) => {
@@ -57,6 +58,7 @@ export default function ListaTransacoesScreen({ navigation }) {
 
   useFocusEffect(
     useCallback(() => {
+      setMensagemSucesso('');
       carregarDados();
     }, [carregarDados])
   );
@@ -94,10 +96,12 @@ export default function ListaTransacoesScreen({ navigation }) {
           style: 'destructive',
           onPress: async () => {
             try {
+              setMensagemSucesso('');
               await excluirTransacao(item.id);
+              setMensagemSucesso('Transação excluída com sucesso!');
               carregarDados(true);
             } catch (e) {
-              Alert.alert('Erro', e.message || 'Não foi possível excluir.');
+              setErro(e.message || 'Não foi possível excluir a transação.');
             }
           },
         },
@@ -170,6 +174,15 @@ export default function ListaTransacoesScreen({ navigation }) {
       {erro ? (
         <View style={styles.caixaErro}>
           <Text style={styles.textoErro}>{erro}</Text>
+          <TouchableOpacity onPress={() => carregarDados()}>
+            <Text style={styles.textoTentarNovamente}>Tentar novamente</Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
+
+      {mensagemSucesso ? (
+        <View style={styles.caixaSucesso}>
+          <Text style={styles.textoSucesso}>{mensagemSucesso}</Text>
         </View>
       ) : null}
 
@@ -323,13 +336,39 @@ const styles = StyleSheet.create({
   },
   caixaErro: {
     backgroundColor: '#fee2e2',
-    padding: 10,
+    borderLeftWidth: 4,
+    borderLeftColor: '#b91c1c',
+    padding: 12,
+    borderRadius: 6,
+    marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 8,
+  },
+  textoErro: {
+    flex: 1,
+    color: '#991b1b',
+    fontSize: 13,
+  },
+  textoTentarNovamente: {
+    color: '#991b1b',
+    fontSize: 13,
+    fontWeight: '700',
+    textDecorationLine: 'underline',
+  },
+  caixaSucesso: {
+    backgroundColor: '#dcfce7',
+    borderLeftWidth: 4,
+    borderLeftColor: '#15803d',
+    padding: 12,
     borderRadius: 6,
     marginBottom: 10,
   },
-  textoErro: {
-    color: '#991b1b',
+  textoSucesso: {
+    color: '#166534',
     fontSize: 13,
+    fontWeight: '500',
   },
   centro: {
     flex: 1,
