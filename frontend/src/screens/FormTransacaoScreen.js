@@ -14,7 +14,12 @@ import {
   criarTransacao,
   listarCategorias,
 } from '../services/api';
-import { dataHojeISO } from '../utils/formatters';
+import {
+  dataHojeISO,
+  formatarDataBR,
+  parseDataParaISO,
+  parseValorNumerico,
+} from '../utils/formatters';
 
 export default function FormTransacaoScreen({ navigation, route }) {
   const transacaoEdicao = route.params?.transacao || null;
@@ -22,9 +27,13 @@ export default function FormTransacaoScreen({ navigation, route }) {
 
   const [descricao, setDescricao] = useState(transacaoEdicao?.descricao || '');
   const [valor, setValor] = useState(
-    transacaoEdicao?.valor != null ? String(transacaoEdicao.valor) : ''
+    transacaoEdicao?.valor != null
+      ? Number(transacaoEdicao.valor).toFixed(2).replace('.', ',')
+      : ''
   );
-  const [data, setData] = useState(transacaoEdicao?.data || dataHojeISO());
+  const [data, setData] = useState(
+    formatarDataBR(transacaoEdicao?.data || dataHojeISO())
+  );
   const [tipo, setTipo] = useState(transacaoEdicao?.tipo || 'DESPESA');
   const [categoriaId, setCategoriaId] = useState(
     transacaoEdicao?.categoria?.id || null
@@ -67,14 +76,15 @@ export default function FormTransacaoScreen({ navigation, route }) {
       return;
     }
 
-    const valorNumero = Number(valor.replace(',', '.'));
-    if (!valor.trim() || Number.isNaN(valorNumero) || valorNumero <= 0) {
+    const valorNumero = parseValorNumerico(valor);
+    if (Number.isNaN(valorNumero) || valorNumero <= 0) {
       setErro('Informe um valor válido maior que zero.');
       return;
     }
 
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(data.trim())) {
-      setErro('Informe a data no formato AAAA-MM-DD.');
+    const dataIso = parseDataParaISO(data);
+    if (!dataIso) {
+      setErro('Informe uma data válida no formato DD/MM/AAAA.');
       return;
     }
 
@@ -86,7 +96,7 @@ export default function FormTransacaoScreen({ navigation, route }) {
     const payload = {
       descricao: descricao.trim(),
       valor: valorNumero,
-      data: data.trim(),
+      data: dataIso,
       tipo,
       categoria: { id: categoriaId },
       observacao: observacao.trim() ? observacao.trim() : null,
@@ -128,16 +138,16 @@ export default function FormTransacaoScreen({ navigation, route }) {
       <Text style={styles.label}>Valor (R$) *</Text>
       <TextInput
         style={styles.input}
-        placeholder="Ex: 150.00"
+        placeholder="Ex: 150,00"
         keyboardType="decimal-pad"
         value={valor}
         onChangeText={setValor}
       />
 
-      <Text style={styles.label}>Data (AAAA-MM-DD) *</Text>
+      <Text style={styles.label}>Data (DD/MM/AAAA) *</Text>
       <TextInput
         style={styles.input}
-        placeholder="2026-11-20"
+        placeholder="20/11/2026"
         value={data}
         onChangeText={setData}
       />
