@@ -1,5 +1,4 @@
-// Emulador Android usa 10.0.2.2 para acessar o localhost da máquina.
-// Em dispositivo físico com Expo Go, troque pelo IP local da máquina (ex: http://192.168.0.15:8080/api).
+// 10.0.2.2 para emulador Android; usar IP local da maquina no Expo Go
 const BASE_URL = 'http://10.0.2.2:8080/api';
 
 async function request(endpoint, options = {}) {
@@ -55,10 +54,6 @@ export function listarTransacoes(busca = '', campo = 'data', direcao = 'desc') {
     params.append('direcao', direcao);
   }
   return request(`/transacoes?${params.toString()}`);
-}
-
-export function buscarTransacaoPorId(id) {
-  return request(`/transacoes/${id}`);
 }
 
 export function buscarResumo() {

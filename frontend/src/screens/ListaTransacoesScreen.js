@@ -34,14 +34,14 @@ export default function ListaTransacoesScreen({ navigation }) {
   const [mensagemSucesso, setMensagemSucesso] = useState('');
 
   const carregarDados = useCallback(
-    async (silencioso = false, buscaParam = buscaAtiva, campoParam = campoOrdenacao, direcaoParam = direcaoOrdenacao) => {
+    async (silencioso = false) => {
       try {
         if (!silencioso) {
           setCarregando(true);
         }
         setErro('');
         const [lista, dadosResumo] = await Promise.all([
-          listarTransacoes(buscaParam, campoParam, direcaoParam),
+          listarTransacoes(buscaAtiva, campoOrdenacao, direcaoOrdenacao),
           buscarResumo(),
         ]);
         setTransacoes(lista || []);
@@ -65,24 +65,19 @@ export default function ListaTransacoesScreen({ navigation }) {
 
   function aplicarBusca() {
     setBuscaAtiva(textoBusca);
-    carregarDados(false, textoBusca, campoOrdenacao, direcaoOrdenacao);
   }
 
   function limparBusca() {
     setTextoBusca('');
     setBuscaAtiva('');
-    carregarDados(false, '', campoOrdenacao, direcaoOrdenacao);
   }
 
   function selecionarCampo(campo) {
     setCampoOrdenacao(campo);
-    carregarDados(false, buscaAtiva, campo, direcaoOrdenacao);
   }
 
   function alternarDirecao() {
-    const novaDirecao = direcaoOrdenacao === 'asc' ? 'desc' : 'asc';
-    setDirecaoOrdenacao(novaDirecao);
-    carregarDados(false, buscaAtiva, campoOrdenacao, novaDirecao);
+    setDirecaoOrdenacao((atual) => (atual === 'asc' ? 'desc' : 'asc'));
   }
 
   function confirmarExclusao(item) {
